@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Higher or Lower",
-    "slug": "higher-or-lower",
+    "name": "Up or Nah?",
+    "slug": "Up or Nah? The Game",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo-hol.png",
     "scheme": "myapp",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
@@ -13,19 +13,21 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "userInterfaceStyle": "dark"
+      "userInterfaceStyle": "dark",
+      "icon": "./assets/images/logo-hol.png"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/logo-hol.png",
         "backgroundColor": "#121212"
       },
-      "userInterfaceStyle": "dark"
+      "userInterfaceStyle": "dark",
+      "icon": "./assets/images/logo-hol.png"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/icon.png"
+      "favicon": "./assets/images/logo-hol.png"
     },
     "plugins": [
       "expo-router"

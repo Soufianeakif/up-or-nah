@@ -3,8 +3,9 @@ export const COLORS = {
   secondary: '#f44336',
   background: '#ffffff',
   text: '#000000',
-  textLight: '#666666',
+  textLight: '#a3a2a2',
   white: '#ffffff',
+  blue: '#00ffff',
 };
 
 export const SPACING = {

@@ -23,9 +23,20 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack 
+      screenOptions={{ 
+        headerShown: false,
+      }}
+    >
       <Stack.Screen name="index" />
       <Stack.Screen name="game" />
+      <Stack.Screen name="howtoplay" />
+      <Stack.Screen 
+        name="[...unmatched]"
+        options={{
+          title: 'Not Found',
+        }}
+      />
     </Stack>
   );
 }

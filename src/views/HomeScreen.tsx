@@ -52,7 +52,7 @@ const HomeScreen: React.FC = () => {
             </TouchableOpacity>
             <TouchableOpacity 
               style={styles.howToPlayButton}
-              onPress={() => {}}
+              onPress={() => router.push('/howtoplay')}
               activeOpacity={0.8}
             >
               <Text style={styles.howToPlayText}>HOW TO PLAY</Text>
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: SPACING.md,
     paddingHorizontal: SPACING.xl,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(0, 255, 255, 0.1)',
   },
   subtitle: {
     color: COLORS.textLight,
