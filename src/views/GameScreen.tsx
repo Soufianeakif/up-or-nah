@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Animated } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Animated, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import useGameStore from '@/store/GameStore';
+import GameService from '@/services/GameService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,6 +14,26 @@ export default function GameScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const gameOverAnim = useRef(new Animated.Value(0)).current;
+
+  // Save high score when leaving the game
+  const handleExit = async () => {
+    await GameService.updateHighScoreIfNeeded(score);
+    router.back();
+  };
+
+  useEffect(() => {
+    // Handle back button press
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      handleExit();
+      return true;
+    });
+
+    return () => {
+      // Cleanup and save score when component unmounts
+      GameService.updateHighScoreIfNeeded(score);
+      backHandler.remove();
+    };
+  }, [score]);
 
   useEffect(() => {
     if (isGameOver) {
@@ -96,6 +117,7 @@ export default function GameScreen() {
           <Image source={{ uri: nextItem.image }} style={styles.image} />
           <View style={styles.overlay}>
             <Text style={styles.keywordBottom}>{nextItem.keyword}</Text>
+            <Text style={styles.searchTextTop}>Has</Text>
             <View style={styles.buttonsContainer}>
               <TouchableOpacity
                 style={[styles.button, styles.higherButton]}
@@ -112,6 +134,7 @@ export default function GameScreen() {
                 <AntDesign name="arrowdown" size={24} color="white" />
               </TouchableOpacity>
             </View>
+            <Text style={styles.searchCompareText}>searches than "{currentItem.keyword}"</Text>
           </View>
         </Animated.View>
       </Animated.View>
@@ -153,7 +176,7 @@ export default function GameScreen() {
             </TouchableOpacity>
             <TouchableOpacity 
               style={[styles.gameOverButton, styles.menuButton]}
-              onPress={() => router.back()}
+              onPress={handleExit}
             >
               <Text style={styles.gameOverButtonText}>BACK TO MENU</Text>
             </TouchableOpacity>
@@ -166,7 +189,7 @@ export default function GameScreen() {
         {/* Back Button and Score */}
         <View style={styles.header}>
           <TouchableOpacity 
-            onPress={() => router.back()} 
+            onPress={handleExit}
             style={styles.backButton}
           >
             <AntDesign name="arrowleft" size={24} color="white" />
@@ -248,10 +271,10 @@ const styles = StyleSheet.create({
   },
   keywordBottom: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 16,
   },
   searchVolumeTop: {
     color: 'white',
@@ -263,6 +286,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     textAlign: 'center',
+    marginBottom: 24,
+  },
+  searchCompareText: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 24,
   },
   vsWrapper: {
     position: 'absolute',
@@ -293,19 +323,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonsContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 16,
-    marginTop: 8,
+    gap: 20,
+    marginVertical: 16,
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
     borderRadius: 25,
-    gap: 8,
+    gap: 12,
+    minWidth: 160,
+    justifyContent: 'center',
   },
   higherButton: {
     backgroundColor: '#4CAF50',
