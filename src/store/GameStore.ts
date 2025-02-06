@@ -7,6 +7,7 @@ interface GameStore extends GameState {
   controller: GameController | null;
   isGameOver: boolean;
   finalScore: number;
+  highScore: number;
   initializeGame: () => Promise<void>;
   makeGuess: (guess: 'higher' | 'lower') => boolean;
   resetGame: () => void;
@@ -33,7 +34,8 @@ const useGameStore = create<GameStore>((set, get) => ({
         ...gameState,
         highScore,
         isGameOver: false,
-        finalScore: 0
+        finalScore: 0,
+        score: 0
       });
     } catch (error) {
       console.error('Error initializing game:', error);
@@ -41,21 +43,24 @@ const useGameStore = create<GameStore>((set, get) => ({
   },
 
   makeGuess: (guess: 'higher' | 'lower') => {
-    const { controller } = get();
+    const { controller, score } = get();
     if (!controller) return false;
 
     const isCorrect = controller.handleGuess(guess);
     const newState = controller.getState();
     
     if (!isCorrect) {
+      const finalScore = score; // Use current score before state update
       set({ 
         ...newState, 
         isGameOver: true,
-        finalScore: newState.score
+        finalScore
       });
-      if (newState.score > get().highScore) {
-        GameService.saveHighScore(newState.score);
-        set({ highScore: newState.score });
+
+      // Handle high score
+      if (finalScore > get().highScore) {
+        GameService.saveHighScore(finalScore);
+        set({ highScore: finalScore });
       }
     } else {
       set(newState);
@@ -72,7 +77,8 @@ const useGameStore = create<GameStore>((set, get) => ({
     set({ 
       ...controller.getState(),
       isGameOver: false,
-      finalScore: 0
+      finalScore: 0,
+      score: 0
     });
   }
 }));

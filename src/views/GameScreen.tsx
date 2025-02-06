@@ -9,7 +9,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function GameScreen() {
   const router = useRouter();
-  const { score, currentItem, nextItem, makeGuess, isGameOver, resetGame, finalScore } = useGameStore();
+  const { score, currentItem, nextItem, makeGuess, isGameOver, resetGame, finalScore, highScore } = useGameStore();
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const gameOverAnim = useRef(new Animated.Value(0)).current;
@@ -135,7 +135,13 @@ export default function GameScreen() {
       >
         <View style={styles.gameOverContent}>
           <Text style={styles.gameOverText}>GAME OVER</Text>
-          <Text style={styles.finalScoreText}>Score: {finalScore}</Text>
+          <View style={styles.scoresContainer}>
+            <Text style={styles.finalScoreText}>Score: {finalScore}</Text>
+            <Text style={styles.highScoreText}>Highest score: {highScore}</Text>
+            {finalScore === highScore && finalScore > 0 && (
+              <Text style={styles.newHighScoreText}>New High Score!</Text>
+            )}
+          </View>
           <View style={styles.gameOverButtons}>
             <TouchableOpacity 
               style={[styles.gameOverButton, styles.playAgainButton]}
@@ -158,16 +164,14 @@ export default function GameScreen() {
         {/* Back Button and Score */}
         <View style={styles.header}>
           <TouchableOpacity 
-            onPress={() => {
-              resetGame();
-              router.back();
-            }} 
+            onPress={() => router.back()} 
             style={styles.backButton}
           >
             <AntDesign name="arrowleft" size={24} color="white" />
           </TouchableOpacity>
           <View style={styles.scoreContainer}>
             <Text style={styles.scoreText}>Score: {score}</Text>
+            <Text style={styles.bestScoreText}>Best: {highScore}</Text>
           </View>
         </View>
       </SafeAreaView>
@@ -205,11 +209,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
+    alignItems: 'center',
   },
   scoreText: {
     color: 'white',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  bestScoreText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 14,
+    marginTop: 2,
   },
   itemContainer: {
     flex: 1,
@@ -319,11 +329,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
+  scoresContainer: {
+    alignItems: 'center',
+    gap: 8,
+  },
   finalScoreText: {
     color: 'white',
     fontSize: 32,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  highScoreText: {
+    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  newHighScoreText: {
+    color: '#4CAF50',
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 8,
   },
   gameOverButtons: {
     flexDirection: 'column',
