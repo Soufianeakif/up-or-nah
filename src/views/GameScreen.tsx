@@ -76,7 +76,9 @@ export default function GameScreen() {
           <Image source={{ uri: currentItem.image }} style={styles.image} />
           <View style={styles.overlay}>
             <Text style={styles.keywordTop}>{currentItem.keyword}</Text>
-            <Text style={styles.searchVolumeTop}>{currentItem.searchVolume.toLocaleString()} searches/month</Text>
+            <Text style={styles.searchTextTop}>Has</Text>
+            <Text style={styles.searchVolumeTop}>{currentItem.searchVolume.toLocaleString()}</Text>
+            <Text style={styles.searchTextTop}>searches monthly</Text>
           </View>
         </View>
 
@@ -252,6 +254,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   searchVolumeTop: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  searchTextTop: {
     color: 'white',
     fontSize: 20,
     textAlign: 'center',
