@@ -5,6 +5,8 @@ import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import useGameStore from '@/store/GameStore';
 import GameService from '@/services/GameService';
+import SoundService from '@/services/SoundService';
+import { Audio } from 'expo-av';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,6 +16,31 @@ export default function GameScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
   const gameOverAnim = useRef(new Animated.Value(0)).current;
+  const hasInitializedSound = useRef(false);
+
+  // Initialize sounds
+  useEffect(() => {
+    const initSound = async () => {
+      try {
+        if (!hasInitializedSound.current) {
+          await Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            staysActiveInBackground: false,
+          });
+          await SoundService.initialize();
+          hasInitializedSound.current = true;
+        }
+      } catch (error) {
+        console.error('Error initializing sound:', error);
+      }
+    };
+
+    initSound();
+
+    return () => {
+      SoundService.cleanup();
+    };
+  }, []);
 
   // Save high score when leaving the game
   const handleExit = async () => {
@@ -37,6 +64,8 @@ export default function GameScreen() {
 
   useEffect(() => {
     if (isGameOver) {
+      // Play wrong sound when game is over
+      SoundService.playWrong();
       Animated.spring(gameOverAnim, {
         toValue: 1,
         tension: 50,
@@ -48,15 +77,19 @@ export default function GameScreen() {
     }
   }, [isGameOver]);
 
-  const handleGuess = (guess: 'higher' | 'lower') => {
+  const handleGuess = async (guess: 'higher' | 'lower') => {
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 200,
       useNativeDriver: true,
-    }).start(() => {
-      makeGuess(guess);
+    }).start(async () => {
+      const isCorrect = makeGuess(guess);
       
       if (!isGameOver) {
+        if (isCorrect) {
+          await SoundService.playCorrect();
+        }
+        
         slideAnim.setValue(height);
         fadeAnim.setValue(0);
 

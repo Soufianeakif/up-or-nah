@@ -39,7 +39,7 @@ export default class GameService {
       if (score > currentHighScore) {
         await AsyncStorage.setItem(HIGH_SCORE_KEY, score.toString());
         this.highScore = score;
-        console.log('New high score saved:', score);
+        //console.log('New high score saved:', score);
       }
     } catch (error) {
       console.error('Error saving high score:', error);
