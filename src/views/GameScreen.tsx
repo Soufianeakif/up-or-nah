@@ -329,6 +329,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 24,
     padding: 20,
+    width: '100%',
   },
   gameOverText: {
     color: 'white',
@@ -340,6 +341,7 @@ const styles = StyleSheet.create({
   scoresContainer: {
     alignItems: 'center',
     gap: 8,
+    marginBottom: 16,
   },
   finalScoreText: {
     color: 'white',
@@ -363,16 +365,19 @@ const styles = StyleSheet.create({
   gameOverButtons: {
     flexDirection: 'column',
     gap: 16,
-    marginTop: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
-    maxWidth: 300,
+    paddingHorizontal: 20,
+    maxWidth: 400,
   },
   gameOverButton: {
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 30,
-    width: '100%',
+    width: '80%',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   playAgainButton: {
     backgroundColor: '#4CAF50',
