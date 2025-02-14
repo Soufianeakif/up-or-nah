@@ -35,4 +35,8 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# Gradle files
+android/.gradle/
+android/app/build/
+
 app-example
