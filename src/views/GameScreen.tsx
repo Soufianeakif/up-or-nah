@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image, Animated, BackHandler } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import useGameStore from '@/store/GameStore';
 import GameService from '@/services/GameService';
@@ -17,6 +17,7 @@ export default function GameScreen() {
   const slideAnim = useRef(new Animated.Value(0)).current;
   const gameOverAnim = useRef(new Animated.Value(0)).current;
   const hasInitializedSound = useRef(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   // Initialize sounds
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function GameScreen() {
             staysActiveInBackground: false,
           });
           await SoundService.initialize();
+          setIsMuted(SoundService.isSoundMuted());
           hasInitializedSound.current = true;
         }
       } catch (error) {
@@ -117,6 +119,11 @@ export default function GameScreen() {
     }).start(() => {
       resetGame();
     });
+  };
+
+  const handleToggleMute = () => {
+    const newMuteState = SoundService.toggleMute();
+    setIsMuted(newMuteState);
   };
 
   if (!currentItem || !nextItem) return null;
@@ -231,6 +238,16 @@ export default function GameScreen() {
             <Text style={styles.scoreText}>Score: {score}</Text>
             <Text style={styles.bestScoreText}>Best: {highScore}</Text>
           </View>
+          <TouchableOpacity 
+            onPress={handleToggleMute}
+            style={styles.soundButton}
+          >
+            {isMuted ? (
+              <Ionicons name="volume-mute" size={24} color="white" />
+            ) : (
+              <Ionicons name="volume-high" size={24} color="white" />
+            )}
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </View>
@@ -261,6 +278,15 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
+  },
+  soundButton: {
+    padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scoreContainer: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)',

@@ -14,6 +14,7 @@ export default class SoundService {
   private static wrongSound: SoundObject | null = null;
   private static isInitialized: boolean = false;
   private static isWeb: boolean = Platform.OS === 'web';
+  private static isMuted: boolean = false;
 
   private static async loadWebSound(path: string): Promise<WebAudio> {
     return new Promise((resolve, reject) => {
@@ -80,6 +81,7 @@ export default class SoundService {
 
   private static async playWebSound(sound: HTMLAudioElement): Promise<void> {
     try {
+      if (this.isMuted) return;
       sound.currentTime = 0;
       await sound.play();
     } catch (error) {
@@ -90,6 +92,7 @@ export default class SoundService {
 
   private static async playNativeSound(sound: Audio.Sound): Promise<void> {
     try {
+      if (this.isMuted) return;
       await sound.setPositionAsync(0);
       await sound.playAsync();
     } catch (error) {
@@ -132,6 +135,15 @@ export default class SoundService {
       console.error('Error playing wrong sound:', error);
       this.isInitialized = false;
     }
+  }
+
+  public static toggleMute(): boolean {
+    this.isMuted = !this.isMuted;
+    return this.isMuted;
+  }
+
+  public static isSoundMuted(): boolean {
+    return this.isMuted;
   }
 
   public static async cleanup(): Promise<void> {
